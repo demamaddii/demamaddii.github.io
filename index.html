@@ -28,7 +28,7 @@
       position: absolute;
       top: 20px;
       right: 20px;
-      background-color: white;
+      background-color: rgba(255, 255, 255, 0.8);
       padding: 10px;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -63,7 +63,7 @@
 
   <!-- عنصر لعرض مفتاح الخريطة -->
   <div id="mapKey">
-    <h2>Map Key</h2>
+    <h2 style="margin-top: 0;">Map Key</h2>
     <div class="legend-item">
       <span class="legend-circle" style="background-color: black;"></span>
       <span>Electric Car Charging Station</span>
@@ -103,7 +103,7 @@
         pointToLayer: function(feature, latlng) {
           return L.circleMarker(latlng, {
             radius: 5,
-            fillColor: " ",
+            fillColor: "",
             color: "black",
             weight: 1,
             opacity: 1,
@@ -131,3 +131,4 @@
   </script>
 </body>
 </html>
+
