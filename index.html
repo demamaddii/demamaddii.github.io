@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <title>Electric Car Salfit</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.13.0/Control.Geocoder.css" />
   <style>
     body {
       margin: 0;
@@ -17,12 +18,19 @@
       top: 0;
       bottom: 0;
     }
+
+    .leaflet-control-geocoder-form {
+      width: auto;
+      margin: 0;
+      display: flex;
+    }
   </style>
 </head>
 <body>
   <div id="map"></div>
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.13.0/Control.Geocoder.min.js"></script>
   <script>
     const mapOptions = {
       zoomSnap: 0.5,
@@ -66,6 +74,9 @@
         }
       }).addTo(map);
     });
+
+    // Add Geocoder Control
+    L.Control.geocoder().addTo(map);
   </script>
 </body>
 </html>
