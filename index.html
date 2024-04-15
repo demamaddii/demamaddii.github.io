@@ -6,6 +6,8 @@
   <title>Electric Car Salfit</title>
   <!-- إضافة رابط لمكتبة Leaflet CSS لاستخدامها في تنسيق الخريطة -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+  <!-- إضافة رابط لمكتبة Leaflet Control Search CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.9/leaflet-search.min.css" />
   <!-- التنسيق الخاص بالصفحة -->
   <style>
     /* تنسيق الصفحة */
@@ -22,60 +24,16 @@
       top: 0;
       bottom: 0;
     }
-
-    /* تنسيق مفتاح الخريطة */
-    #mapKey {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    .legend-item {
-      margin-bottom: 5px;
-      display: flex;
-      align-items: center;
-    }
-
-    .legend-circle {
-      display: inline-block;
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      margin-right: 5px;
-    }
-
-    /* تنسيق لون البحث */
-    .leaflet-control-search {
-      background-color: white;
-      border-radius: 5px;
-      padding: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
   </style>
 </head>
 <body>
   <!-- الخريطة -->
   <div id="map"></div>
 
-  <!-- عنصر لعرض مفتاح الخريطة -->
-  <div id="mapKey">
-    <h2 style="margin-top: 0;">Map Key</h2>
-    <div class="legend-item">
-      <span class="legend-circle" style="background-color: black;"></span>
-      <span>Electric Car Charging Station</span>
-    </div>
-    <div class="legend-item">
-      <span class="legend-circle" style="background-color: blue;"></span>
-      <span>Electric Cars</span>
-    </div>
-  </div>
-
   <!-- إضافة رابط لمكتبة Leaflet JavaScript لبناء الخريطة -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+  <!-- إضافة رابط لمكتبة Leaflet Control Search JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.9/leaflet-search.min.js"></script>
   <!-- إضافة رابط لمكتبة jQuery JavaScript للاستفادة من أساليب ajax لتحميل البيانات -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -84,7 +42,7 @@
     // تعريف خيارات الخريطة
     const mapOptions = {
       zoomSnap: 0.5, // هذا يسمح بالتكبير بكسر القيمة
-      center: [32.08208264037444, 35.17704785082359], // تم تحديد الإحداثيات
+      center: [32.08205082417027, 35.17704784166058], // تم تحديد الإحداثيات
       zoom: 14, // تحديد مستوى التكبير الابتدائي
     };
 
@@ -94,41 +52,18 @@
     // إضافة خريطة قاعدية إلى الخريطة
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19
+      maxZoom: 10
     }).addTo(map);
 
-    // استخدام jQuery لتحميل بيانات GeoJSON
-    $.getJSON("SalfitC.json", function(SC) {
-      L.geoJson(SC, {
-        pointToLayer: function(feature, latlng) {
-          return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "",
-            color: "black",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.9
-          });
-        }
-      }).addTo(map);
-    });
-
-    // تحميل بيانات السيارات الكهربائية كذلك
-    $.getJSON("ElectricCar.json", function(EC) {
-      L.geoJson(EC, {
-        pointToLayer: function(feature, latlng) {
-          return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "blue",
-            color: "black",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
-          });
-        }
-      }).addTo(map);
-    });
+    // إضافة مربع بحث
+    L.control.search({
+      position: 'topright', // تحديد موقع مربع البحث
+      layer: L.geoJson(EC), // تحديد الطبقة التي يجب البحث فيها
+      propertyName: 'name', // تحديد الخاصية التي يتم البحث عنها
+      initial: false, // تعيين قيمة ابتدائية لمربع البحث
+      zoom: 16, // تكبير الخريطة إلى هذا المستوى عند البحث
+      marker: false // عرض علامات الموقع على الخريطة
+    }).addTo(map);
   </script>
 </body>
 </html>
-
