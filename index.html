@@ -6,8 +6,8 @@
   <title>Electric Car Salfit</title>
   <!-- إضافة رابط لمكتبة Leaflet CSS لاستخدامها في تنسيق الخريطة -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
-  <!-- إضافة رابط لمكتبة Leaflet Control Search CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.9/leaflet-search.min.css" />
+  <!-- إضافة رابط لمكتبة Leaflet Control Geocoder CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.13.0/Control.Geocoder.css" />
   <!-- التنسيق الخاص بالصفحة -->
   <style>
     /* تنسيق الصفحة */
@@ -24,6 +24,13 @@
       top: 0;
       bottom: 0;
     }
+
+    /* تنسيق مربع البحث */
+    .leaflet-control-geocoder-form {
+      width: auto;
+      margin: 0;
+      display: flex;
+    }
   </style>
 </head>
 <body>
@@ -32,8 +39,8 @@
 
   <!-- إضافة رابط لمكتبة Leaflet JavaScript لبناء الخريطة -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
-  <!-- إضافة رابط لمكتبة Leaflet Control Search JavaScript -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/2.9.9/leaflet-search.min.js"></script>
+  <!-- إضافة رابط لمكتبة Leaflet Control Geocoder JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-control-geocoder/1.13.0/Control.Geocoder.min.js"></script>
   <!-- إضافة رابط لمكتبة jQuery JavaScript للاستفادة من أساليب ajax لتحميل البيانات -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -42,7 +49,7 @@
     // تعريف خيارات الخريطة
     const mapOptions = {
       zoomSnap: 0.5, // هذا يسمح بالتكبير بكسر القيمة
-      center: [32.08205082417027, 35.17704784166058], // تم تحديد الإحداثيات
+      center: [32.08208264037444, 35.17704785082359], // تم تحديث الإحداثيات
       zoom: 14, // تحديد مستوى التكبير الابتدائي
     };
 
@@ -55,15 +62,8 @@
       maxZoom: 19
     }).addTo(map);
 
-    // إضافة مربع بحث
-    L.control.search({
-      position: 'topright', // تحديد موقع مربع البحث
-      layer: L.geoJson(EC), // تحديد الطبقة التي يجب البحث فيها
-      propertyName: 'name', // تحديد الخاصية التي يتم البحث عنها
-      initial: false, // تعيين قيمة ابتدائية لمربع البحث
-      zoom: 16, // تكبير الخريطة إلى هذا المستوى عند البحث
-      marker: false // عرض علامات الموقع على الخريطة
-    }).addTo(map);
+    // إضافة مربع بحث للبحث عن المواقع
+    L.Control.geocoder().addTo(map);
   </script>
 </body>
 </html>
