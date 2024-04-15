@@ -38,8 +38,8 @@
     // تعريف خيارات الخريطة
     const mapOptions = {
       zoomSnap: 0.5, // هذا يسمح بالتكبير بكسر القيمة
-      center: [32.0799, 35.1152], // يركز الخريطة على إحداثيات سلفيت
-      zoom: 14, // تحديد مستوى التكبير الابتدائي
+      center: [32.08204972125716, 35.17704914292061], // يركز الخريطة على إحداثيات سلفيت
+      zoom: 20, // تحديد مستوى التكبير الابتدائي
     };
 
     // تعريف الخريطة مع الخيارات أعلاه
@@ -53,13 +53,13 @@
     }).addTo(map);
 
     // استخدام jQuery لتحميل بيانات GeoJSON
-    $.getJSON("SalfitCity.json", function(SC) {
+    $.getJSON("SalfitC.json", function(SC) {
       L.geoJson(SC, {
         pointToLayer: function(feature, latlng) {
           return L.circleMarker(latlng, {
             radius: 5,
-            fillColor: "red",
-            color: "red",
+            fillColor: " ",
+                color: "black",
             weight: 1,
             opacity: 1,
             fillOpacity: 0.9
