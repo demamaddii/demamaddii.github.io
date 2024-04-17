@@ -22,11 +22,27 @@
       top: 0;
       bottom: 0;
     }
+
+    /* تنسيق عنصر الشرح */
+    #legend {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background-color: white;
+      padding: 10px;
+      border: 1px solid black;
+    }
   </style>
 </head>
 <body>
   <!-- الخريطة -->
   <div id="map"></div>
+
+  <!-- عنصر الشرح -->
+  <div id="legend">
+    <strong>Legend</strong><br>
+    Electric Car Location: <img src="CarEl.png" style="width: 20px; height: 20px;"> Electric Car
+  </div>
 
   <!-- إضافة رابط لمكتبة Leaflet JavaScript لبناء الخريطة -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
@@ -50,6 +66,9 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+
+    // إنشاء مقياس الرسم وإضافته إلى الخريطة
+    L.control.scale().addTo(map);
 
     // استخدام jQuery لتحميل بيانات GeoJSON
     $.getJSON("SalfitC.json", function(SC) {
@@ -79,6 +98,9 @@
         }
       }).addTo(map);
     });
+
+    // إنشاء مراقب الموقع المتحرك وإضافته إلى الخريطة
+    L.control.locate().addTo(map);
   </script>
 </body>
 </html>
