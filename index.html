@@ -2,107 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <!-- تحديد عنوان الصفحة -->
   <title>Electric Car Salfit</title>
-  <!-- إضافة رابط لمكتبة Leaflet CSS لاستخدامها في تنسيق الخريطة -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
-  <!-- التنسيق الخاص بالصفحة -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <style>
-    /* تنسيق الصفحة */
-    body {
+    body, html {
       margin: 0;
+      padding: 0;
       height: 100%;
-      width: 100%;
     }
 
-    /* تنسيق الخريطة */
     #map {
-      position: absolute;
       width: 100%;
-      top: 0;
-      bottom: 0;
-    }
-
-    /* تنسيق عنصر الشرح */
-    #legend {
-      display: none; /* يبقي الشرح مخفياً ابتدائياً */
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      background-color: white;
-      padding: 10px;
-      border: 1px solid black;
-    }
-
-    /* يعرض عنصر الشرح عندما يكون عرض الشاشة أكبر من 768 بيكسل */
-    @media only screen and (min-width: 768px) {
-      #legend {
-        display: block;
-      }
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  <!-- الخريطة -->
   <div id="map"></div>
 
-  <!-- إضافة رابط لمكتبة Leaflet JavaScript لبناء الخريطة -->
-  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
-  <!-- إضافة رابط لمكتبة jQuery JavaScript للاستفادة من أساليب ajax لتحميل البيانات -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-  <!-- الجافا سكريبت -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
-    // تعريف خيارات الخريطة
-    const mapOptions = {
-      zoomSnap: 0.5, // هذا يسمح بالتكبير بكسر القيمة
-      center: [32.08204972125716, 35.17704914292061], // يركز الخريطة على إحداثيات سلفيت
-      zoom: 20, // تحديد مستوى التكبير الابتدائي
-    };
+    var map = L.map('map').setView([32.08204972125716, 35.17704914292061], 20);
 
-    // تعريف الخريطة مع الخيارات أعلاه
-    const map = L.map("map", mapOptions);
-
-    // إضافة خريطة قاعدية إلى الخريطة
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // إنشاء مقياس الرسم وإضافته إلى الخريطة
-    L.control.scale().addTo(map);
-
-    // استخدام jQuery لتحميل بيانات GeoJSON
-    $.getJSON("SalfitC.json", function(SC) {
-      L.geoJson(SC, {
-        style: {
-          fillColor: "transparent", // تعيين لون الحشو ليكون شفاف
-          color: "black", // تعيين لون الحدود
-          weight: 2, // تعيين سمك الخط
-          opacity: 1, // تعيين شفافية الخط
-          fillOpacity: 0 // تعيين شفافية الحشو
-        }
-      }).addTo(map);
-    });
-
-    // استخدام jQuery لتحميل بيانات GeoJSON
-    $.getJSON("ElectricC.json", function(EC) {
-      L.geoJson(EC, {
-        pointToLayer: function(feature, latlng) {
-          // إنشاء رمز لتمثيل المواقع
-          var electricCarIcon = L.icon({
-            iconUrl: 'ElC.png', // رابط الصورة لرمز السيارة الكهربائية
-            iconSize: [32, 32], // حجم الرمز
-            iconAnchor: [16, 32], // محور الرمز
-            popupAnchor: [0, -32] // موضع النافذة المنبثقة بالنسبة للرمز
-          });
-          return L.marker(latlng, { icon: electricCarIcon });
-        }
-      }).addTo(map);
-    });
-
-    // إنشاء مراقب الموقع المتحرك وإضافته إلى الخريطة
+    // إضافة زر لتحديد الموقع
     L.control.locate().addTo(map);
+
+    // إضافة مفتاح الخريطة
+    L.control.scale().addTo(map);
   </script>
 </body>
 </html>
