@@ -65,7 +65,7 @@
     });
 
     // تحميل بيانات السيارات الكهربائية كذلك
-    $.getJSON("ElectricCar.json", function(EC) {
+    $.getJSON("ElectricC.json", function(EC) {
       L.geoJson(EC, {
         pointToLayer: function(feature, latlng) {
           return L.circleMarker(latlng, {
