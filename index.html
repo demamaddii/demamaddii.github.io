@@ -64,18 +64,18 @@
       }).addTo(map);
     });
 
-    // تحميل بيانات السيارات الكهربائية كذلك
+    // استخدام jQuery لتحميل بيانات GeoJSON
     $.getJSON("ElectricC.json", function(EC) {
       L.geoJson(EC, {
         pointToLayer: function(feature, latlng) {
-          return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "blue",
-            color: "red",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
+          // إنشاء رمز لتمثيل المواقع
+          var electricCarIcon = L.icon({
+            iconUrl: 'CarE.png', // رابط الصورة لرمز السيارة الكهربائية
+            iconSize: [32, 32], // حجم الرمز
+            iconAnchor: [16, 32], // محور الرمز
+            popupAnchor: [0, -32] // موضع النافذة المنبثقة بالنسبة للرمز
           });
+          return L.marker(latlng, { icon: electricCarIcon });
         }
       }).addTo(map);
     });
