@@ -25,6 +25,7 @@
 
     /* تنسيق عنصر الشرح */
     #legend {
+      display: none; /* يبقي الشرح مخفياً ابتدائياً */
       position: absolute;
       bottom: 10px;
       left: 10px;
@@ -32,17 +33,18 @@
       padding: 10px;
       border: 1px solid black;
     }
+
+    /* يعرض عنصر الشرح عندما يكون عرض الشاشة أكبر من 768 بيكسل */
+    @media only screen and (min-width: 768px) {
+      #legend {
+        display: block;
+      }
+    }
   </style>
 </head>
 <body>
   <!-- الخريطة -->
   <div id="map"></div>
-
-  <!-- عنصر الشرح -->
-  <div id="legend">
-    <strong>Legend</strong><br>
-    Electric Car Location: <img src="CarEl.png" style="width: 20px; height: 20px;"> Electric Car
-  </div>
 
   <!-- إضافة رابط لمكتبة Leaflet JavaScript لبناء الخريطة -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
@@ -89,7 +91,7 @@
         pointToLayer: function(feature, latlng) {
           // إنشاء رمز لتمثيل المواقع
           var electricCarIcon = L.icon({
-            iconUrl: 'CarEl.png', // رابط الصورة لرمز السيارة الكهربائية
+            iconUrl: 'ElC.png', // رابط الصورة لرمز السيارة الكهربائية
             iconSize: [32, 32], // حجم الرمز
             iconAnchor: [16, 32], // محور الرمز
             popupAnchor: [0, -32] // موضع النافذة المنبثقة بالنسبة للرمز
