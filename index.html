@@ -69,13 +69,20 @@
       border-radius: 5px;
     }
     .leaflet-control-zoom-in, .leaflet-control-zoom-out {
-      font-size: 16px;
-      line-height: 16px;
+      font-size: 20px;
+      line-height: 20px;
       width: 30px;
       height: 30px;
       text-align: center;
       cursor: pointer;
       margin-bottom: 5px;
+      border: 1px solid #777;
+      background-color: white;
+      color: #333;
+    }
+    .leaflet-control-zoom-in:hover, .leaflet-control-zoom-out:hover {
+      background-color: #f4f4f4;
+      color: #000;
     }
     /* End of zoom control styles */
     .leaflet-control-scale, .leaflet-control-attribution {
