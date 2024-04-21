@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Electric Car Salfit</title>
+  <title>Electric car charging stations in Salfit</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
   <style>
     body {
@@ -34,17 +34,13 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
-      background-color: white;
+      background-color: black;
       padding: 5px;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
     .leaflet-control-container .leaflet-bottom.leaflet-right {
       margin: 10px;
-    }
-    /* تمت إضافة هذا النمط لإخفاء المربع الأبيض */
-    .leaflet-bottom.leaflet-right #map-key {
-      display: none;
     }
   </style>
 </head>
@@ -53,8 +49,8 @@
   <div id="map"></div>
   <div id="legend">
     <h3>Legend</h3>
-    <div class="legend-item"><span class="zone-color" style="background-color: transparent;"></span> Zones with Electric Cars</div>
-    <div class="legend-item"><span class="electric-car-color" style="background-color: black;"></span> Electric Cars</div>
+    <div class="legend-item"><span class="SalfitC-color" style="background-color: transparent;"></span>SalfitC</div>
+    <div class="legend-item"><span class="ElectricC-color" style="background-color: black;"></span> ElectricC</div>
   </div>
   <div id="search-box">
     <input type="text" id="search-input" placeholder="Search for locations">
@@ -73,14 +69,13 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
-    L.control.scale().addTo(map);
-    const electricCarsLayer = L.layerGroup().addTo(map); // Create a layer group for electric cars
+    const electricCarsLayer = L.layerGroup().addTo(map);
     $.getJSON("SalfitC.json", function(SC) {
       L.geoJson(SC, {
         style: {
           fillColor: "transparent",
-          color: "blue",
-          weight: 1.0,
+          color: "black",
+          weight: 2.0,
           opacity: 0.7,
           fillOpacity: 0.0
         }
@@ -89,21 +84,19 @@
     $.getJSON("ElectricC.json", function(EC) {
       L.geoJson(EC, {
         pointToLayer: function(feature, latlng) {
-          var electricCarIcon = L.icon({
-            iconUrl: 'ElC.png',
-            iconSize: [30, 30],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, 0]
+          var electricCarIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: "<div style='background-color: black; width: 20px; height: 20px; border-radius: 50%;'></div>",
+            iconSize: [20, 20]
           });
           return L.marker(latlng, { icon: electricCarIcon });
         }
-      }).addTo(electricCarsLayer); // Add electric cars to the layer group
+      }).addTo(electricCarsLayer);
     });
-    // Search locations function
     function searchLocations() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
-      electricCarsLayer.eachLayer(function(layer) { // Search within the layer group only
-        const name = layer.feature.properties.name.toLowerCase(); // Proper property name for ElectricC.json
+      electricCarsLayer.eachLayer(function(layer) {
+        const name = layer.feature.properties.name.toLowerCase();
         if (name.includes(searchTerm)) {
           layer.addTo(map);
         } else {
@@ -111,7 +104,6 @@
         }
       });
     }
-    // Show user's location
     map.locate({setView: true, maxZoom: 16});
     function onLocationFound(e) {
       const customIcon = L.divIcon({
