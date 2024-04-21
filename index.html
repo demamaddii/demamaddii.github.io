@@ -6,15 +6,15 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
   <style>
     body {
-      margin: 0px;
+      margin: 0;
       height: 100%;
       width: 100%;
     }
     #map {
       position: absolute;
       width: 100%;
-      top: 0px;
-      bottom: 100px; 
+      top: 0;
+      bottom: 0;
     }
     #legend {
       display: none;
@@ -39,8 +39,8 @@
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
-    .leaflet-control-container .leaflet-bottom.leaflet-right {
-      margin: 10px;
+    .leaflet-control-scale, .leaflet-control-attribution {
+      display: none;
     }
   </style>
 </head>
@@ -63,6 +63,7 @@
       zoomSnap: 0.5,
       center: [32.08204972125716, 35.17704914292061],
       zoom: 20,
+      zoomControl: false // Disable zoom control
     };
     const map = L.map("map", mapOptions);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
