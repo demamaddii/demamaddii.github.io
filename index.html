@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Electric car charging stations in Salfit</title>
+  <title>Electric Car Salfit</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
   <style>
     body {
@@ -34,7 +34,7 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
-      background-color: black;
+      background-color: white;
       padding: 5px;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -49,8 +49,8 @@
   <div id="map"></div>
   <div id="legend">
     <h3>Legend</h3>
-    <div class="legend-item"><span class="SalfitC-color" style="background-color: transparent;"></span>SalfitC</div>
-    <div class="legend-item"><span class="ElectricC-color" style="background-color: black;"></span> ElectricC</div>
+    <div class="legend-item"><span class="zone-color" style="background-color: transparent;"></span> Zones with Electric Cars</div>
+    <div class="legend-item"><span class="electric-car-color" style="background-color: black;"></span> Electric Cars</div>
   </div>
   <div id="search-box">
     <input type="text" id="search-input" placeholder="Search for locations">
@@ -69,7 +69,7 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
-    const electricCarsLayer = L.layerGroup().addTo(map);
+    const electricCarsLayer = L.layerGroup().addTo(map); // Create a layer group for electric cars
     $.getJSON("SalfitC.json", function(SC) {
       L.geoJson(SC, {
         style: {
@@ -84,19 +84,21 @@
     $.getJSON("ElectricC.json", function(EC) {
       L.geoJson(EC, {
         pointToLayer: function(feature, latlng) {
-          var electricCarIcon = L.divIcon({
-            className: 'custom-div-icon',
-            html: "<div style='background-color: black; width: 20px; height: 20px; border-radius: 50%;'></div>",
-            iconSize: [20, 20]
+          var electricCarIcon = L.icon({
+            iconUrl: 'ElC.png',
+            iconSize: [30, 30],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, 0]
           });
           return L.marker(latlng, { icon: electricCarIcon });
         }
-      }).addTo(electricCarsLayer);
+      }).addTo(electricCarsLayer); // Add electric cars to the layer group
     });
+    // Search locations function
     function searchLocations() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
-      electricCarsLayer.eachLayer(function(layer) {
-        const name = layer.feature.properties.name.toLowerCase();
+      electricCarsLayer.eachLayer(function(layer) { // Search within the layer group only
+        const name = layer.feature.properties.name.toLowerCase(); // Proper property name for ElectricC.json
         if (name.includes(searchTerm)) {
           layer.addTo(map);
         } else {
@@ -104,6 +106,7 @@
         }
       });
     }
+    // Show user's location
     map.locate({setView: true, maxZoom: 16});
     function onLocationFound(e) {
       const customIcon = L.divIcon({
