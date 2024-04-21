@@ -71,8 +71,8 @@
     }).addTo(map);
     L.control.scale().addTo(map);
     const electricCarsLayer = L.layerGroup().addTo(map); // Create a layer group for electric cars
-    $.getJSON("SalfitC.json", function(SC) {
-      L.geoJson(SC, {
+    $.getJSON("SalfitZones.json", function(zones) {
+      L.geoJson(zones, {
         style: {
           fillColor: "transparent",
           color: "blue",
@@ -82,24 +82,30 @@
         }
       }).addTo(map);
     });
-    $.getJSON("ElectricC.json", function(EC) {
-      L.geoJson(EC, {
+    $.getJSON("ElectricCars.json", function(electricCars) {
+      L.geoJson(electricCars, {
         pointToLayer: function(feature, latlng) {
           var electricCarIcon = L.icon({
-            iconUrl: 'ElC.png',
+            iconUrl: 'ElectricCarIcon.png',
             iconSize: [30, 30],
             iconAnchor: [16, 32],
             popupAnchor: [0, 0]
           });
           return L.marker(latlng, { icon: electricCarIcon });
+        },
+        onEachFeature: function(feature, layer) {
+          if (feature.properties) {
+            layer.bindPopup("<b>Electric Car</b><br>Model: " + feature.properties.model + "<br>License Plate: " + feature.properties.licensePlate);
+          }
         }
       }).addTo(electricCarsLayer); // Add electric cars to the layer group
     });
     function searchLocations() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
       electricCarsLayer.eachLayer(function(layer) { // Search within the layer group only
-        const name = layer.feature.properties.name.toLowerCase(); // Proper property name for ElectricC.json
-        if (name.includes(searchTerm)) {
+        const model = layer.feature.properties.model.toLowerCase(); // Proper property name for ElectricCars.json
+        const licensePlate = layer.feature.properties.licensePlate.toLowerCase(); // Proper property name for ElectricCars.json
+        if (model.includes(searchTerm) || licensePlate.includes(searchTerm)) {
           layer.addTo(map);
         } else {
           map.removeLayer(layer);
