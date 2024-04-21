@@ -58,6 +58,26 @@
       margin-bottom: 2px;
     }
     /* End of scale control styles */
+    /* Adjust zoom control */
+    .leaflet-control-zoom {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 5px;
+      border-radius: 5px;
+    }
+    .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+      font-size: 16px;
+      line-height: 16px;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      cursor: pointer;
+      margin-bottom: 5px;
+    }
+    /* End of zoom control styles */
     .leaflet-control-scale, .leaflet-control-attribution {
       display: none;
     }
@@ -82,7 +102,7 @@
       zoomSnap: 0.5,
       center: [32.08204972125716, 35.17704914292061],
       zoom: 20,
-      zoomControl: false // Disable zoom control
+      zoomControl: false // Disable default zoom control
     };
     const map = L.map("map", mapOptions);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -91,7 +111,7 @@
     }).addTo(map);
     // Add zoom control
     L.control.zoom({
-      position: 'topright'
+      position: 'topleft' // Set the zoom control to top left
     }).addTo(map);
     // Add scale
     L.control.scale().addTo(map);
