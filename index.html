@@ -39,6 +39,25 @@
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
+    /* Display scale control */
+    .leaflet-control-scale {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 5px;
+      border-radius: 5px;
+    }
+    .leaflet-control-scale-line {
+      border: 2px solid black;
+      border-top: none;
+      background-color: white;
+    }
+    .leaflet-control-scale-line:first-of-type {
+      margin-bottom: 2px;
+    }
+    /* End of scale control styles */
     .leaflet-control-scale, .leaflet-control-attribution {
       display: none;
     }
