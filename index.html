@@ -71,8 +71,8 @@
     }).addTo(map);
     L.control.scale().addTo(map);
     const electricCarsLayer = L.layerGroup().addTo(map); // Create a layer group for electric cars
-    $.getJSON("SalfitZones.json", function(zones) {
-      L.geoJson(zones, {
+    $.getJSON("SalfitC.json", function(SC) {
+      L.geoJson(SC, {
         style: {
           fillColor: "transparent",
           color: "blue",
@@ -82,8 +82,8 @@
         }
       }).addTo(map);
     });
-    $.getJSON("ElectricCars.json", function(electricCars) {
-      L.geoJson(electricCars, {
+    $.getJSON("ElectricC.json", function(EC) {
+      L.geoJson(EC, {
         pointToLayer: function(feature, latlng) {
           var electricCarIcon = L.icon({
             iconUrl: 'ElectricCarIcon.png',
