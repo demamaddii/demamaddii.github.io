@@ -6,82 +6,82 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
   <style>
     body {
-      margin: 0;
+      margin: 0px;
       height: 100%;
       width: 100%;
     }
-
     #map {
       position: absolute;
       width: 100%;
-      top: 0;
-      bottom: 0;
+      top: 0px;
+      bottom: 100px; 
     }
-
     #legend {
       display: none;
       position: absolute;
       bottom: 10px;
       left: 10px;
-      background-color: white;
+      background-color: rgba(255, 255, 255, 0.8);
       padding: 10px;
-      border: 1px solid black;
+      border-radius: 5px;
     }
-
-    @media only screen and (min-width: 768px) {
-      #legend {
-        display: block;
-      }
+    .legend-item {
+      margin-bottom: 5px;
     }
-
-    /* تنسيق مفتاح الخريطة */
-    .leaflet-control-scale {
+    #search-box {
       position: absolute;
-      bottom: 30px; /* تغيير القيمة لتظهر بشكل جيد */
-      left: 30px; /* تغيير القيمة لتظهر بشكل جيد */
-      background-color: white;
-      border: 1px solid black;
-      padding: 5px 10px;
-      font-size: 12px;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 1000;
+      background-color: white;
+      padding: 5px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    .leaflet-control-container .leaflet-bottom.leaflet-right {
+      margin: 10px;
     }
   </style>
 </head>
 <body>
+  <h1 style="text-align: center;">Electric Car Salfit</h1>
   <div id="map"></div>
-
+  <div id="legend">
+    <h3>Legend</h3>
+    <div class="legend-item"><span class="zone-color" style="background-color: transparent;"></span> Zones with Electric Cars</div>
+    <div class="legend-item"><span class="electric-car-color" style="background-color: black;"></span> Electric Cars</div>
+  </div>
+  <div id="search-box">
+    <input type="text" id="search-input" placeholder="Search for locations">
+    <button onclick="searchLocations()">Search</button>
+  </div>
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
   <script>
     const mapOptions = {
       zoomSnap: 0.5,
       center: [32.08204972125716, 35.17704914292061],
       zoom: 20,
     };
-
     const map = L.map("map", mapOptions);
-
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
-
-    // إضافة مفتاح الخريطة
     L.control.scale().addTo(map);
-
+    const electricCarsLayer = L.layerGroup().addTo(map); // Create a layer group for electric cars
     $.getJSON("SalfitC.json", function(SC) {
       L.geoJson(SC, {
         style: {
           fillColor: "transparent",
-          color: "black",
-          weight: 2,
-          opacity: 1,
-          fillOpacity: 0
+          color: "blue",
+          weight: 1.0,
+          opacity: 0.7,
+          fillOpacity: 0.0
         }
       }).addTo(map);
     });
-
     $.getJSON("ElectricC.json", function(EC) {
       L.geoJson(EC, {
         pointToLayer: function(feature, latlng) {
@@ -93,11 +93,29 @@
           });
           return L.marker(latlng, { icon: electricCarIcon });
         }
-      }).addTo(map);
+      }).addTo(electricCarsLayer); // Add electric cars to the layer group
     });
-
-    // إنشاء مراقب الموقع المتحرك وإضافته إلى الخريطة
-    L.control.locate().addTo(map);
+    function searchLocations() {
+      const searchTerm = document.getElementById('search-input').value.toLowerCase();
+      electricCarsLayer.eachLayer(function(layer) { // Search within the layer group only
+        const name = layer.feature.properties.name.toLowerCase(); // Proper property name for ElectricC.json
+        if (name.includes(searchTerm)) {
+          layer.addTo(map);
+        } else {
+          map.removeLayer(layer);
+        }
+      });
+    }
+    // Show user's location
+    map.locate({setView: true, maxZoom: 16});
+    function onLocationFound(e) {
+      const customIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: "<div style='background-color:#007bff;width:20px;height:20px;border-radius:50%;'></div>"
+      });
+      L.marker(e.latlng, {icon: customIcon}).addTo(map);
+    }
+    map.on('locationfound', onLocationFound);
   </script>
 </body>
 </html>
