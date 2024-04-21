@@ -86,26 +86,21 @@
       L.geoJson(EC, {
         pointToLayer: function(feature, latlng) {
           var electricCarIcon = L.icon({
-            iconUrl: 'ElectricCarIcon.png',
+            iconUrl: 'ElC.png',
             iconSize: [30, 30],
             iconAnchor: [16, 32],
             popupAnchor: [0, 0]
           });
           return L.marker(latlng, { icon: electricCarIcon });
-        },
-        onEachFeature: function(feature, layer) {
-          if (feature.properties) {
-            layer.bindPopup("<b>Electric Car</b><br>Model: " + feature.properties.model + "<br>License Plate: " + feature.properties.licensePlate);
-          }
         }
       }).addTo(electricCarsLayer); // Add electric cars to the layer group
     });
+    // Search locations function
     function searchLocations() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
       electricCarsLayer.eachLayer(function(layer) { // Search within the layer group only
-        const model = layer.feature.properties.model.toLowerCase(); // Proper property name for ElectricCars.json
-        const licensePlate = layer.feature.properties.licensePlate.toLowerCase(); // Proper property name for ElectricCars.json
-        if (model.includes(searchTerm) || licensePlate.includes(searchTerm)) {
+        const name = layer.feature.properties.name.toLowerCase(); // Proper property name for ElectricC.json
+        if (name.includes(searchTerm)) {
           layer.addTo(map);
         } else {
           map.removeLayer(layer);
@@ -123,5 +118,20 @@
     }
     map.on('locationfound', onLocationFound);
   </script>
+  <!-- Adding map key -->
+  <div class="leaflet-bottom leaflet-right">
+    <div id="map-key" class="leaflet-control">
+      <div class="leaflet-control-layers leaflet-control-layers-expanded">
+        <div class="leaflet-control-layers-list">
+          <div class="leaflet-control-layers-base">
+            <label>
+              <input type="radio" name="basemap" checked>
+              Electric Car Salfit
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
