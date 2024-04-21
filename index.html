@@ -116,6 +116,9 @@
       L.marker(e.latlng, {icon: customIcon}).addTo(map);
     }
     map.on('locationfound', onLocationFound);
+    
+    // Add scale control
+    L.control.scale().addTo(map);
   </script>
 </body>
 </html>
