@@ -39,7 +39,6 @@
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
-    /* Display scale control */
     .leaflet-control-scale {
       position: absolute;
       bottom: 20px;
@@ -57,8 +56,6 @@
     .leaflet-control-scale-line:first-of-type {
       margin-bottom: 2px;
     }
-    /* End of scale control styles */
-    /* Adjust zoom control */
     .leaflet-control-zoom {
       position: absolute;
       top: 20px;
@@ -84,7 +81,6 @@
       background-color: #f4f4f4;
       color: #000;
     }
-    /* End of zoom control styles */
     .leaflet-control-scale, .leaflet-control-attribution {
       display: none;
     }
@@ -109,20 +105,18 @@
       zoomSnap: 0.5,
       center: [32.08204972125716, 35.17704914292061],
       zoom: 20,
-      zoomControl: false // Disable default zoom control
+      zoomControl: false
     };
     const map = L.map("map", mapOptions);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
-    // Add zoom control
     L.control.zoom({
-      position: 'topleft' // Set the zoom control to top left
+      position: 'topleft'
     }).addTo(map);
-    // Add scale
     L.control.scale().addTo(map);
-    const electricCarsLayer = L.layerGroup().addTo(map); // Create a layer group for electric cars
+    const electricCarsLayer = L.layerGroup().addTo(map);
     $.getJSON("SalfitC.json", function(SC) {
       L.geoJson(SC, {
         style: {
@@ -145,13 +139,12 @@
           });
           return L.marker(latlng, { icon: electricCarIcon });
         }
-      }).addTo(electricCarsLayer); // Add electric cars to the layer group
+      }).addTo(electricCarsLayer);
     });
-    // Search locations function
     function searchLocations() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
-      electricCarsLayer.eachLayer(function(layer) { // Search within the layer group only
-        const name = layer.feature.properties.name.toLowerCase(); // Proper property name for ElectricC.json
+      electricCarsLayer.eachLayer(function(layer) {
+        const name = layer.feature.properties.name.toLowerCase();
         if (name.includes(searchTerm)) {
           layer.addTo(map);
         } else {
@@ -159,7 +152,6 @@
         }
       });
     }
-    // Show user's location
     map.locate({setView: true, maxZoom: 16});
     function onLocationFound(e) {
       const customIcon = L.divIcon({
