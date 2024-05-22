@@ -47,17 +47,6 @@
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
-    #legend-toggle {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 1000;
-      background-color: white;
-      padding: 5px;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-    }
     .leaflet-control-container .leaflet-bottom.leaflet-right {
       margin: 10px;
     }
@@ -80,6 +69,7 @@
     <input type="text" id="search-input" placeholder="Search for locations">
     <button onclick="searchLocations()">Search</button>
   </div>
+  <div id="mapbox-toggle" onclick="toggleMapbox()">Toggle Map Style</div>
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
@@ -89,9 +79,19 @@
       zoom: 20,
     };
     const map = L.map("map", mapOptions);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19
+    const mapboxAccessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Replace with your Mapbox access token
+    const mapStyles = {
+      street: 'streets-v11',
+      satellite: 'satellite-v9'
+    };
+    const defaultMapStyle = 'street';
+
+    L.tileLayer(`https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${mapboxAccessToken}`, {
+      maxZoom: 19,
+      id: `mapbox/${mapStyles[defaultMapStyle]}`,
+      tileSize: 512,
+      zoomOffset: -1,
+      attribution: 'Map data &copy; <a href="https://www.mapbox.com/">Mapbox</a>',
     }).addTo(map);
 
     const electricCarsLayer = L.layerGroup().addTo(map); // Create a layer group for electric cars
@@ -143,27 +143,4 @@
     function onLocationFound(e) {
       const customIcon = L.divIcon({
         className: 'custom-div-icon',
-        html: "<div style='background-color:#007bff;width:20px;height:20px;border-radius:50%;'></div>"
-      });
-      L.marker(e.latlng, {icon: customIcon}).addTo(map);
-    }
-    map.on('locationfound', onLocationFound);
-    
-    // Add scale control
-    L.control.scale().addTo(map);
-
-    // Toggle legend visibility
-    function toggleLegend() {
-      const legend = document.getElementById('legend');
-      const toggleButton = document.getElementById('legend-toggle');
-      if (legend.style.display === 'none' || legend.style.display === '') {
-        legend.style.display = 'block';
-        toggleButton.textContent = 'Hide Legend';
-      } else {
-        legend.style.display = 'none';
-        toggleButton.textContent = 'Show Legend';
-      }
-    }
-  </script>
-</body>
-</html>
+        html: "<div style
