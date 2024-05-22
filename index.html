@@ -27,6 +27,8 @@
     }
     .legend-item {
       margin-bottom: 5px;
+      display: flex;
+      align-items: center;
     }
     .legend-color {
       display: inline-block;
@@ -66,8 +68,12 @@
   <div id="map"></div>
   <div id="legend">
     <h3>Legend</h3>
-    <div class="legend-item"><span class="legend-color" style="background-color: black;"></span> City Boundary</div>
-    <div class="legend-item"><img src="ElC.png" width="12" height="12" alt="Electric Car Icon" /> Electric Car Charging Stations</div>
+    <div class="legend-item">
+      <span class="legend-color" style="background-color: black;"></span> City Boundary
+    </div>
+    <div class="legend-item">
+      <img src="ElC.png" width="12" height="12" alt="Electric Car Icon" /> Electric Car Charging Stations
+    </div>
   </div>
   <div id="legend-toggle" onclick="toggleLegend()">Show Legend</div>
   <div id="search-box">
@@ -123,7 +129,7 @@
     function searchLocations() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
       electricCarsLayer.eachLayer(function(layer) { // Search within the layer group only
-        const name = layer.feature.properties.name.toLowerCase(); // Proper property name for ElectricC.json
+        const name = layer.feature.properties.name ? layer.feature.properties.name.toLowerCase() : ''; // Proper property name for ElectricC.json
         if (name.includes(searchTerm)) {
           layer.addTo(map);
         } else {
