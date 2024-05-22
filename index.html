@@ -17,7 +17,7 @@
       bottom: 0px;
     }
     #legend {
-      display: block;
+      display: none;
       position: absolute;
       bottom: 10px;
       left: 10px;
@@ -45,6 +45,17 @@
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
+    #legend-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      background-color: white;
+      padding: 5px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
     .leaflet-control-container .leaflet-bottom.leaflet-right {
       margin: 10px;
     }
@@ -58,6 +69,7 @@
     <div class="legend-item"><span class="legend-color" style="background-color: black;"></span> City Boundary</div>
     <div class="legend-item"><img src="ElC.png" width="12" height="12" alt="Electric Car Icon" /> Electric Car Charging Stations</div>
   </div>
+  <div id="legend-toggle" onclick="toggleLegend()">Show Legend</div>
   <div id="search-box">
     <input type="text" id="search-input" placeholder="Search for locations">
     <button onclick="searchLocations()">Search</button>
@@ -133,6 +145,19 @@
     
     // Add scale control
     L.control.scale().addTo(map);
+
+    // Toggle legend visibility
+    function toggleLegend() {
+      const legend = document.getElementById('legend');
+      const toggleButton = document.getElementById('legend-toggle');
+      if (legend.style.display === 'none' || legend.style.display === '') {
+        legend.style.display = 'block';
+        toggleButton.textContent = 'Hide Legend';
+      } else {
+        legend.style.display = 'none';
+        toggleButton.textContent = 'Show Legend';
+      }
+    }
   </script>
 </body>
 </html>
