@@ -17,7 +17,7 @@
       bottom: 0px;
     }
     #legend {
-      display: none;
+      display: block;
       position: absolute;
       bottom: 10px;
       left: 10px;
@@ -27,6 +27,12 @@
     }
     .legend-item {
       margin-bottom: 5px;
+    }
+    .legend-color {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 5px;
     }
     #search-box {
       position: absolute;
@@ -49,8 +55,8 @@
   <div id="map"></div>
   <div id="legend">
     <h3>Legend</h3>
-    <div class="legend-item"><span class="zone-color" style="background-color: transparent;"></span> Zones with Electric Cars</div>
-    <div class="legend-item"><span class="electric-car-color" style="background-color: black;"></span> Electric Cars</div>
+    <div class="legend-item"><span class="legend-color" style="background-color: black;"></span> City Boundary</div>
+    <div class="legend-item"><img src="ElC.png" width="12" height="12" alt="Electric Car Icon" /> Electric Car Charging Stations</div>
   </div>
   <div id="search-box">
     <input type="text" id="search-input" placeholder="Search for locations">
