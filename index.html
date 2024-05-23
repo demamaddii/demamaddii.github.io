@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <title>Electric car charging stations in Salfit</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
   <style>
     body {
       margin: 0px;
@@ -56,8 +57,13 @@
     <input type="text" id="search-input" placeholder="Search for locations">
     <button onclick="searchLocations()">Search</button>
   </div>
+  <div id="routing-control" class="leaflet-routing-container leaflet-bar leaflet-control">
+    <a class="leaflet-routing-icon leaflet-routing-icon-via" title="Route from here" href="#"></a>
+    <a class="leaflet-routing-icon leaflet-routing-icon-via leaflet-routing-icon-to" title="Route to here" href="#"></a>
+  </div>
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
   <script>
     const mapOptions = {
       zoomSnap: 0.5,
@@ -100,6 +106,14 @@
       }).addTo(electricCarsLayer);
     });
 
+    // Initialize routing control
+    L.Routing.control({
+      waypoints: [],
+      routeWhileDragging: true,
+      show: false,
+      createMarker: function() { return null; }
+    }).addTo(map);
+
     function searchLocations() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
       electricCarsLayer.eachLayer(function(layer) {
@@ -112,4 +126,18 @@
       });
     }
 
-    map.locate({setView: true,
+    // Function to get user's location
+    function getLocation() {
+      map.locate({ setView: true, maxZoom: 15 });
+    }
+
+    // Add a button to trigger user's location
+    L.control({position: 'topright'}).addTo(map).onAdd = function() {
+      var button = L.DomUtil.create('button');
+      button.innerHTML = 'My Location';
+      button.onclick = getLocation;
+      return button;
+    };
+  </script>
+</body>
+</html>
