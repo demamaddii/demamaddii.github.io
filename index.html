@@ -69,10 +69,7 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
-
-    const electricCarsLayer = L.layerGroup().addTo(map);
-
-    // Load Salfit zones
+    const electricCarsLayer = L.layerGroup().addTo(map); // Create a layer group for electric cars
     $.getJSON("SalfitC.json", function(SC) {
       L.geoJson(SC, {
         style: {
@@ -84,8 +81,6 @@
         }
       }).addTo(map);
     });
-
-    // Load Electric Cars
     $.getJSON("ElectricC.json", function(EC) {
       L.geoJson(EC, {
         pointToLayer: function(feature, latlng) {
@@ -97,13 +92,13 @@
           });
           return L.marker(latlng, { icon: electricCarIcon });
         }
-      }).addTo(electricCarsLayer);
+      }).addTo(electricCarsLayer); // Add electric cars to the layer group
     });
-
+    // Search locations function
     function searchLocations() {
       const searchTerm = document.getElementById('search-input').value.toLowerCase();
-      electricCarsLayer.eachLayer(function(layer) {
-        const name = layer.feature.properties.name.toLowerCase();
+      electricCarsLayer.eachLayer(function(layer) { // Search within the layer group only
+        const name = layer.feature.properties.name.toLowerCase(); // Proper property name for ElectricC.json
         if (name.includes(searchTerm)) {
           layer.addTo(map);
         } else {
@@ -111,5 +106,19 @@
         }
       });
     }
-
-    map.locate({setView: true,
+    // Show user's location
+    map.locate({setView: true, maxZoom: 16});
+    function onLocationFound(e) {
+      const customIcon = L.divIcon({
+        className: 'custom-div-icon',
+        html: "<div style='background-color:#007bff;width:20px;height:20px;border-radius:50%;'></div>"
+      });
+      L.marker(e.latlng, {icon: customIcon}).addTo(map);
+    }
+    map.on('locationfound', onLocationFound);
+    
+    // Add scale control
+    L.control.scale().addTo(map);
+  </script>
+</body>
+</html>
