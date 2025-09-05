@@ -113,32 +113,14 @@
       zoom: 15,
     });
 
-    // خرائط الأساس
-    var OpenStreetMap = L.tileLayer(
-      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }
-    );
-
+    // طبقة الصور الفضائية Esri فقط
     var Esri_WorldImagery = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
         attribution:
-          "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, and others",
+          'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
       }
-    );
-
-    // إضافة الخريطة الافتراضية (OpenStreetMap)
-    OpenStreetMap.addTo(map);
-
-    // إضافة أداة تبديل الخرائط
-    var baseMaps = {
-      "خريطة عادية (OpenStreetMap)": OpenStreetMap,
-      "صور فضائية (Esri)": Esri_WorldImagery,
-    };
-    L.control.layers(baseMaps).addTo(map);
+    ).addTo(map); // أضفها مباشرة كطبقة أساسية
 
     var markers = L.markerClusterGroup();
     var busData;
@@ -331,4 +313,3 @@
   </script>
 </body>
 </html>
-
