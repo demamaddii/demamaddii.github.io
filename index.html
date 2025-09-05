@@ -2,122 +2,314 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <title>خريطة GeoJSON مضمّنة</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>خريطة GeoJSON</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+  />
   <style>
-    #map { height: 100vh; }
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      height: 100%;
+    }
+    #control-box {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 5px;
+      border-radius: 5px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      width: calc(100% - 20px);
+      margin: 0 10px;
+      align-items: center;
+    }
+    .leaflet-control-title {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      flex: 2;
+    }
+    #question-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      flex: 1;
+    }
+    #question-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #question-box h2 {
+      margin: 0 0 10px 0;
+    }
+    #question-box label,
+    #question-box select,
+    #question-box button {
+      margin-bottom: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
   </style>
 </head>
 <body>
+  <div id="map"></div>
 
-<div id="map"></div>
+  <div id="control-box">
+    <div id="question-box">
+      <h2>اسئلة حول موقف السيارات</h2>
+      <form id="question-form">
+        <label for="destination">وجهة التوصيل:</label>
+        <select id="destination" name="destination"></select>
+        <button type="submit">اظهار الموقف</button>
+        <button id="route-button" type="button">تحديد المسار</button>
+      </form>
+    </div>
+    <div class="leaflet-control-title">
+      مواقع مواقف سيارات الأجرة في مدينة رام الله
+    </div>
+  </div>
 
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
 
-<script>
-  // هنا ضَع محتويات ملفات GeoJSON كمتغيرات
+  <script>
+    var map = L.map("map", {
+      center: [31.898043, 35.204269],
+      zoom: 15,
+    });
 
-  var busData = {
-    "type": "FeatureCollection",
-    "features": [
+    // طبقة الصور الفضائية Esri فقط
+    var Esri_WorldImagery = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
-        "type": "Feature",
-        "properties": {
-          "Location": "موقف 1",
-          "to_Where_1": "الوجهة أ",
-          "Fees": "5 شيكل",
-          "Time": "08:00 - 20:00",
-          "Name": "مجمع 1"
-        },
-        "geometry": {
-          "type": "Point",
-          "coordinates": [35.203, 31.898]
-        }
+        attribution:
+          'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
       }
-      // أضف باقي نقاط مواقف الحافلات هنا
-    ]
-  };
+    ).addTo(map); // أضفها مباشرة كطبقة أساسية
 
-  var roadsData = {
-    "type": "FeatureCollection",
-    "features": [
-      {
-        "type": "Feature",
-        "properties": {},
-        "geometry": {
-          "type": "LineString",
-          "coordinates": [
-            [35.202, 31.897],
-            [35.205, 31.900]
-          ]
-        }
+    var markers = L.markerClusterGroup();
+    var busData;
+
+    // تحميل بيانات مواقف الحافلات
+    fetch("https://Rahaf-Yaze.github.io/bus.geojson")
+      .then((response) => response.json())
+      .then((data) => {
+        busData = data;
+        var destinationSelect = document.getElementById("destination");
+        var destinations = new Set();
+
+        L.geoJSON(data, {
+          onEachFeature: function (feature, layer) {
+            var popupContent =
+              "<table><tr><th>الموقع</th><td>" +
+              feature.properties.Location +
+              "</td></tr>" +
+              "<tr><th>وجهة التوصيل</th><td>" +
+              feature.properties.to_Where_1 +
+              "</td></tr>" +
+              "<tr><th>اجرة التوصيل</th><td>" +
+              feature.properties.Fees +
+              "</td></tr>" +
+              "<tr><th>الوقت</th><td>" +
+              feature.properties.Time +
+              "</td></tr>" +
+              "<tr><th>اسم المجمع</th><td>" +
+              feature.properties.Name +
+              "</td></tr></table>";
+
+            layer.bindPopup(popupContent);
+            markers.addLayer(layer);
+            destinations.add(feature.properties.to_Where_1);
+          },
+        });
+
+        map.addLayer(markers);
+
+        // تعبئة القائمة المنسدلة
+        destinations.forEach(function (destination) {
+          var option = document.createElement("option");
+          option.value = destination;
+          option.text = destination;
+          destinationSelect.add(option);
+        });
+      });
+
+    // إضافة طبقة الطرق
+    fetch("https://Rahaf-Yaze.github.io/roads.geojson")
+      .then((response) => response.json())
+      .then((data) => {
+        L.geoJSON(data, {
+          style: {
+            color: "gray",
+            weight: 2,
+            opacity: 0.65,
+          },
+        }).addTo(map);
+      });
+
+    // إضافة حدود المدينة
+    fetch("https://Rahaf-Yaze.github.io/Ramallah.geojson")
+      .then((response) => response.json())
+      .then((data) => {
+        L.geoJSON(data, {
+          style: {
+            color: "purple",
+            weight: 3,
+            opacity: 0.65,
+            fillOpacity: 0,
+          },
+        }).addTo(map);
+      });
+
+    var currentLocation;
+
+    // الحصول على الموقع الحالي
+    function getCurrentLocation(callback) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            currentLocation = [
+              position.coords.latitude,
+              position.coords.longitude,
+            ];
+            callback(currentLocation);
+          },
+          function (error) {
+            alert("لم نتمكن من تحديد موقعك الحالي.");
+          }
+        );
+      } else {
+        alert("المتصفح لا يدعم تحديد الموقع الجغرافي.");
       }
-      // أضف باقي الطرق هنا
-    ]
-  };
+    }
 
-  var ramallahBoundary = {
-    "type": "FeatureCollection",
-    "features": [
-      {
-        "type": "Feature",
-        "properties": {},
-        "geometry": {
-          "type": "Polygon",
-          "coordinates": [
-            [
-              [35.200, 31.895],
-              [35.210, 31.895],
-              [35.210, 31.905],
-              [35.200, 31.905],
-              [35.200, 31.895]
-            ]
-          ]
+    // اظهار موقف بناءً على الوجهة المختارة
+    document
+      .getElementById("question-form")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+        var destination = document
+          .getElementById("destination")
+          .value.trim()
+          .toLowerCase();
+        if (busData) {
+          var found = false;
+          markers.clearLayers();
+          var matchingLayer;
+
+          L.geoJSON(busData, {
+            filter: function (feature) {
+              return (
+                feature.properties.to_Where_1.trim().toLowerCase() === destination
+              );
+            },
+            onEachFeature: function (feature, layer) {
+              var popupContent =
+                "<table><tr><th>الموقع</th><td>" +
+                feature.properties.Location +
+                "</td></tr>" +
+                "<tr><th>وجهة التوصيل</th><td>" +
+                feature.properties.to_Where_1 +
+                "</td></tr>" +
+                "<tr><th>اجرة التوصيل</th><td>" +
+                feature.properties.Fees +
+                "</td></tr>" +
+                "<tr><th>الوقت</th><td>" +
+                feature.properties.Time +
+                "</td></tr>" +
+                "<tr><th>اسم المجمع</th><td>" +
+                feature.properties.Name +
+                "</td></tr></table>";
+
+              layer.bindPopup(popupContent);
+              markers.addLayer(layer);
+              map.setView(layer.getLatLng(), 16);
+              matchingLayer = layer;
+              found = true;
+            },
+          });
+
+          if (!found) {
+            alert("لم يتم العثور على وجهة التوصيل المحددة.");
+          } else {
+            markers.addTo(map);
+            if (matchingLayer) matchingLayer.openPopup();
+          }
         }
-      }
-    ]
-  };
+      });
 
-  // إنشاء الخريطة
-  var map = L.map('map').setView([31.898, 35.204], 15);
-
-  // إضافة طبقة OpenStreetMap
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
-
-  // إضافة طبقة مواقف الحافلات
-  L.geoJSON(busData, {
-    onEachFeature: function(feature, layer) {
-      var popupContent =
-        "<b>الموقع:</b> " + feature.properties.Location + "<br>" +
-        "<b>وجهة التوصيل:</b> " + feature.properties.to_Where_1 + "<br>" +
-        "<b>الأجرة:</b> " + feature.properties.Fees + "<br>" +
-        "<b>الوقت:</b> " + feature.properties.Time + "<br>" +
-        "<b>اسم المجمع:</b> " + feature.properties.Name;
-      layer.bindPopup(popupContent);
-    }
-  }).addTo(map);
-
-  // إضافة طبقة الطرق
-  L.geoJSON(roadsData, {
-    style: {
-      color: 'gray',
-      weight: 2,
-      opacity: 0.65
-    }
-  }).addTo(map);
-
-  // إضافة حدود رام الله
-  L.geoJSON(ramallahBoundary, {
-    style: {
-      color: 'purple',
-      weight: 3,
-      opacity: 0.65,
-      fillOpacity: 0
-    }
-  }).addTo(map);
-
-</script>
+    // زر تحديد المسار
+    document
+      .getElementById("route-button")
+      .addEventListener("click", function () {
+        var destination = document
+          .getElementById("destination")
+          .value.trim()
+          .toLowerCase();
+        if (busData) {
+          var found = false;
+          var destinationLatLng;
+          L.geoJSON(busData, {
+            filter: function (feature) {
+              return (
+                feature.properties.to_Where_1.trim().toLowerCase() === destination
+              );
+            },
+            onEachFeature: function (feature, layer) {
+              destinationLatLng = layer.getLatLng();
+              found = true;
+            },
+          });
+          if (!found) {
+            alert("لم يتم العثور على وجهة التوصيل المحددة.");
+          } else {
+            getCurrentLocation(function (currentLocation) {
+              L.Routing.control({
+                waypoints: [
+                  L.latLng(currentLocation[0], currentLocation[1]),
+                  L.latLng(destinationLatLng.lat, destinationLatLng.lng),
+                ],
+                routeWhileDragging: true,
+              }).addTo(map);
+            });
+          }
+        }
+      });
+  </script>
 </body>
 </html>
